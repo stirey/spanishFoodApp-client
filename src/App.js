@@ -1,26 +1,40 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useState, useEffect } from 'react';
+
 import './App.css';
+import Navbar from './components/Navbar/Navbar';
+import Auth from './components/Auth/Auth'
+import SpanishFood from './components/SpanishFood/SpanishFood'
 
 function App() {
+  //let session Token, function setSessionToken(newValue) { sessionToken = newValue}
+  const [sessionToken, setSessionToken] = useState(undefined);
+
+  useEffect(
+    () => {
+      const token = localStorage.getItem('token')
+      if (token) {
+        setSessionToken(token)
+      }
+    }, []
+  )
+
+  const updateToken = (newToken) => {
+    setSessionToken(newToken)
+    localStorage.setItem('token', newToken)
+  }
+
+  const clearToken = () => {
+    setSessionToken(undefined)
+    localStorage.clear()
+  }
+ 
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Navbar clearToken={clearToken}/>
+    { !sessionToken ? <Auth updateToken={updateToken} /> : <SpanishFood sessionToken={sessionToken} />}
     </div>
   );
 }
+
 
 export default App;
